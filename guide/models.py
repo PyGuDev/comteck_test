@@ -20,7 +20,7 @@ class Guide(models.Model):
 
 class GuideVersion(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    guide_id = models.ForeignKey('Guide', on_delete=models.CASCADE)
+    guide_id = models.ForeignKey('Guide', on_delete=models.CASCADE, verbose_name='Справочник')
     title = models.CharField('Название версии', max_length=500)
     date_created = models.DateTimeField('Время начала действия')
 
@@ -35,7 +35,8 @@ class GuideVersion(models.Model):
 
 class GuideItem(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    parent_id = models.ForeignKey('GuideVersion', related_name='guide_item',  on_delete=models.CASCADE)
+    parent_id = models.ForeignKey('GuideVersion', related_name='guide_item',  on_delete=models.CASCADE,
+                                  verbose_name='Версия справочника')
     code_item = models.CharField('Код элемента', max_length=500)
     value_item = models.CharField('Значение элемента', max_length=1000)
 
