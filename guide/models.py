@@ -20,7 +20,8 @@ class Guide(models.Model):
 
 class GuideVersion(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    guide_id = models.ForeignKey('Guide', on_delete=models.CASCADE, verbose_name='Справочник')
+    guide_id = models.ForeignKey('Guide', on_delete=models.CASCADE, related_name='guide_version',
+                                 verbose_name='Справочник')
     title = models.CharField('Название версии', max_length=500)
     date_created = models.DateTimeField('Время начала действия')
 
