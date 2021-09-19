@@ -3,12 +3,14 @@ from typing import Union
 from django.core.exceptions import ValidationError
 from django.db.models import Value, QuerySet
 from django.http import Http404
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
 from .exceptions import BadRequestError
+from .schema import ValidateGuideItemSchema
 from .serializers import ListGuideSerializer, ListGuideItemSerializer
 from .models import Guide, GuideItem, GuideVersion
 
@@ -54,6 +56,7 @@ class ListGuideItemAPIView(ListAPIView):
         queryset = GuideItem.objects.filter(parent_id=guide)
         return queryset
 
+    @swagger_auto_schema(responses=ValidateGuideItemSchema.responses)
     def put(self, request, **kwargs):
         """
         Проверкак входящих данных актуальной версии
@@ -86,7 +89,7 @@ class ListGuideItemAPIView(ListAPIView):
                     list_error_field.append(item.get("code_item"))
 
             if list_error_field:
-                raise BadRequestError(message=f'Items invalid', code='invalid', data={'code_item': [list_error_field]})
+                raise BadRequestError(message='Items invalid', code='invalid', data={'code_item': [list_error_field]})
 
         elif type(data) == ReturnDict:
             try:
@@ -111,6 +114,7 @@ class ListGuideItemSelectedVersionAPIView(ListGuideItemAPIView):
 
         return guide_version.guide_item.all()
 
+    @swagger_auto_schema(responses=ValidateGuideItemSchema.responses)
     def put(self, request, **kwargs):
         """
         Проверкак входящих данных заданной версии
