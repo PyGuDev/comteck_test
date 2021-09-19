@@ -23,7 +23,7 @@ class GuideVersion(models.Model):
     guide_id = models.ForeignKey('Guide', on_delete=models.CASCADE, related_name='guide_version',
                                  verbose_name='Справочник')
     title = models.CharField('Название версии', max_length=500)
-    date_created = models.DateTimeField('Время начала действия')
+    date_created = models.DateField('Время начала действия')
 
     def __str__(self):
         return f'{self.guide_id.name} версия {self.title}'
