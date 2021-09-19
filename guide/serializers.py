@@ -10,7 +10,7 @@ class GuideVersionSerializer(serializers.ModelSerializer):
 
 class GuideVersionTitleSerializer(GuideVersionSerializer):
     class Meta(GuideVersionSerializer.Meta):
-        fields = ['id', 'title']
+        fields = ['id', 'title', 'date_created']
 
 
 class ListGuideSerializer(serializers.ModelSerializer):
