@@ -70,7 +70,7 @@ class ListGuideItemAPIView(ListAPIView):
             try:
                 queryset.get(**item)
             except GuideItem.DoesNotExist:
-                raise BadRequestError(message=f'Items code {item.get("code_item")} invalid', code='invalid')
+                raise BadRequestError(message=f'Item code {item.get("code_item")} invalid', code='invalid')
 
 
 class ListGuideItemSelectedVersionAPIView(ListGuideItemAPIView):
