@@ -22,7 +22,12 @@ class GuideVersionFormSet(BaseInlineFormSet):
                         title = form.cleaned_data.get('title')
                         if title:
                             if GuideVersion.objects.filter(title=title, guide_id=self.instance).exists():
-                                raise ValidationError(f'Справочник с версией {title} ужу существет')
+                                raise ValidationError(f'Справочник с версией {title} уже существует')
+
+                        date_created = form.cleaned_data.get('date_created')
+                        if date_created:
+                            if GuideVersion.objects.filter(date_created=date_created, guide_id=self.instance).exists():
+                                raise ValidationError(f'Справочник с такой датой {date_created} уже существует')
 
                 else:
                     # Если форма была ранее создана
@@ -32,7 +37,14 @@ class GuideVersionFormSet(BaseInlineFormSet):
                         if title:
                             if title != form.initial.get('title'):
                                 if GuideVersion.objects.filter(title=title, guide_id=self.instance).exists():
-                                    raise ValidationError(f'Справочник с версией {title} ужу существет')
+                                    raise ValidationError(f'Справочник с версией {title} уже существует')
+
+                        date_created = form.cleaned_data.get('date_created')
+                        if date_created:
+                            if date_created != form.initial.get('date_created'):
+                                if GuideVersion.objects.filter(
+                                        date_created=date_created, guide_id=self.instance).exists():
+                                    raise ValidationError(f'Справочник с такой датой {date_created} уже существует')
 
 
 class GuideVersionTabularInline(admin.TabularInline):
@@ -47,10 +59,8 @@ class GuideVersionTabularInline(admin.TabularInline):
         return format_html(
             '<a class="button" href="{}">Добавить</a><p class="help">{}</p>',
             reverse('admin:guide_guideversion_change', args=[obj.pk]),
-            ('Можно только после сохранения формы',)
+            'Можно только после сохранения формы'
         )
-
-
 
 
 @admin.register(Guide)
