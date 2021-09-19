@@ -18,7 +18,7 @@ class ListGuideSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_version(obj):
-        versions = obj.guide_version.all()
+        versions = obj.guide_version.filter(date_created__gte=obj.filter_date)
         return GuideVersionTitleSerializer(instance=versions, many=True).data
 
     class Meta:
