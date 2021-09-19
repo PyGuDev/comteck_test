@@ -29,7 +29,11 @@ class ListGuideAPIView(ListAPIView):
 
 
 class ListGuideItemAPIView(ListAPIView):
-    """Получение элементов спраочника актаульной версии"""
+    """
+    Получение элементов спраочника
+
+    Получаение элементы актуальной версии (последней)
+    """
     serializer_class = ListGuideItemSerializer
 
     def get_queryset(self):
