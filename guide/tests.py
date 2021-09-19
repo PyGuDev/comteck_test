@@ -83,7 +83,6 @@ class GuideTestCase(TestCase):
 
         response = self.client.put(list_guide_item_url, data=send_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'message': 'Item code F2F invalid', 'code': 'invalid'})
 
     def test_get_list_item_selected_version(self):
         list_guide_item_url = reverse('list_guide_item_selected_version',
@@ -134,5 +133,3 @@ class GuideTestCase(TestCase):
 
         response = self.client.put(list_guide_item_url, data=send_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'message': 'Item code SAA invalid', 'code': 'invalid'})
-
