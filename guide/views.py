@@ -68,7 +68,7 @@ class ListGuideItemAPIView(ListAPIView):
         self._validate(serializer.data)
         return Response(status=status.HTTP_200_OK)
 
-    def _validate(self, list_data: dict):
+    def _validate(self, list_data: list):
         """Проверяем наличие элементов в базе данных"""
         queryset = self.get_queryset()
         for item in list_data:
