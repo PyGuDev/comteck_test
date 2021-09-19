@@ -1,9 +1,12 @@
+from typing import Union
+
 from django.core.exceptions import ValidationError
 from django.db.models import Value, QuerySet
 from django.http import Http404
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
+from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 
 from .exceptions import BadRequestError
 from .serializers import ListGuideSerializer, ListGuideItemSerializer
@@ -62,20 +65,34 @@ class ListGuideItemAPIView(ListAPIView):
     def _validate_items(self, request):
         """Проверкак входящих данных списка словарей элементов справочника"""
         data = request.data
-        serializer = self.serializer_class(data=data, many=True)
+        if type(data) == dict:
+            serializer = self.serializer_class(data=data)
+        else:
+            serializer = self.serializer_class(data=data, many=True)
         serializer.is_valid(raise_exception=True)
 
         self._validate(serializer.data)
         return Response(status=status.HTTP_200_OK)
 
-    def _validate(self, list_data: list):
+    def _validate(self, data: Union[ReturnList, ReturnDict]):
         """Проверяем наличие элементов в базе данных"""
         queryset = self.get_queryset()
-        for item in list_data:
+        if type(data) == ReturnList:
+            list_error_field = []
+            for item in data:
+                try:
+                    queryset.get(**item)
+                except GuideItem.DoesNotExist:
+                    list_error_field.append(item.get("code_item"))
+
+            if list_error_field:
+                raise BadRequestError(message=f'Items invalid', code='invalid', data={'code_item': [list_error_field]})
+
+        elif type(data) == ReturnDict:
             try:
-                queryset.get(**item)
+                queryset.get(**data)
             except GuideItem.DoesNotExist:
-                raise BadRequestError(message=f'Item code {item.get("code_item")} invalid', code='invalid')
+                raise BadRequestError(message=f'Item code {data.get("code_item")} invalid', code='invalid')
 
 
 class ListGuideItemSelectedVersionAPIView(ListGuideItemAPIView):
