@@ -82,5 +82,5 @@ class GuideItemTabularInline(admin.TabularInline):
 
 @admin.register(GuideVersion)
 class GuideVersionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title']
+    list_display = ['id', 'title', 'guide_id']
     inlines = [GuideItemTabularInline]
