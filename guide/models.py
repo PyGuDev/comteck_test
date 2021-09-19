@@ -1,6 +1,15 @@
 import uuid
 
 from django.db import models
+from django.db.models import QuerySet
+
+
+class GuideManager(models.Manager):
+    def filter_date(self, date: str) -> 'QuerySet[Guide]':
+        return self.get_queryset().filter(guide_version__date_created__gte=date).distinct('name')
+
+    def get_current_version(self, pk: str) -> 'GuideVersion':
+        return self.get_queryset().get(pk=pk).guide_version.all().order_by('date_created').last()
 
 
 class Guide(models.Model):
@@ -8,6 +17,8 @@ class Guide(models.Model):
     name = models.CharField('Наименование', max_length=1000, unique=True)
     short_name = models.CharField('Короткое наименование', max_length=300, unique=True)
     description = models.TextField('Описание', blank=True, null=True)
+
+    objects = GuideManager()
 
     def __str__(self):
         return self.short_name
