@@ -52,6 +52,11 @@ class ListGuideItemAPIView(ListAPIView):
         return queryset
 
     def put(self, request, **kwargs):
+        """
+        Проверкак входящих данных актуальной версии
+
+        Валидация списка словарей элементов справочника"
+        """
         return self._validate_items(request)
 
     def _validate_items(self, request):
@@ -88,3 +93,11 @@ class ListGuideItemSelectedVersionAPIView(ListGuideItemAPIView):
             raise Http404
 
         return guide_version.guide_item.all()
+
+    def put(self, request, **kwargs):
+        """
+        Проверкак входящих данных заданной версии
+
+        Валидация списка словарей элементов справочника"
+        """
+        return super().put(request, **kwargs)
