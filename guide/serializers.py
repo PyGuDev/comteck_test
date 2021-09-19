@@ -1,25 +1,32 @@
 from rest_framework import serializers
 
-from .models import Guide, GuideItem, GuideVersion
+from .models import Guide, GuideVersion
 
 
 class GuideVersionSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор версий справочника
+    """
     class Meta:
         model = GuideVersion
-
-
-class GuideVersionTitleSerializer(GuideVersionSerializer):
-    class Meta(GuideVersionSerializer.Meta):
         fields = ['id', 'title', 'date_created']
 
 
 class ListGuideSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор списка справочников
+    """
     versions = serializers.SerializerMethodField('get_version')
 
     @staticmethod
     def get_version(obj):
-        versions = obj.guide_version.filter(date_created__gte=obj.filter_date)
-        return GuideVersionTitleSerializer(instance=versions, many=True).data
+        # Проверкак наличия аттрибуиа filter_date
+        if hasattr(obj, 'filter_date'):
+            # Фильтрация версий справочника
+            versions = obj.guide_version.filter(date_created__gte=obj.filter_date)
+        else:
+            versions = obj.guide_version.all()
+        return GuideVersionSerializer(instance=versions, many=True).data
 
     class Meta:
         model = Guide
