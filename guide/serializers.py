@@ -1,3 +1,4 @@
+from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers
 
 from .models import Guide, GuideItem, GuideVersion
@@ -19,6 +20,7 @@ class ListGuideSerializer(serializers.ModelSerializer):
     versions = serializers.SerializerMethodField('get_version')
 
     @staticmethod
+    @swagger_serializer_method(serializer_or_field=GuideVersionSerializer)
     def get_version(obj):
         # Проверкак наличия аттрибуиа filter_date
         if hasattr(obj, 'filter_date'):
