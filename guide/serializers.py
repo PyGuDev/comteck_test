@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Guide, GuideVersion
+from .models import Guide, GuideItem, GuideVersion
 
 
 class GuideVersionSerializer(serializers.ModelSerializer):
@@ -31,3 +31,12 @@ class ListGuideSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guide
         fields = ['id', 'name', 'short_name', 'versions']
+
+
+class ListGuideItemSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор списка элементов справочника
+    """
+    class Meta:
+        model = GuideItem
+        fields = ['code_item', 'value_item']
