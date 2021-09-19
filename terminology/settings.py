@@ -12,7 +12,7 @@ SECRET_KEY = 'django-insecure-jt3eut#5&fq(qodl=qh7&^^2%n0sg!ke63-5by#8r0$%g85ji7
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0']
+ALLOWED_HOSTS = ['*']
 
 
 INSTALLED_APPS = [
@@ -22,6 +22,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'guide'
 ]
 
 MIDDLEWARE = [
@@ -95,3 +97,9 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny'
+    ]
+}

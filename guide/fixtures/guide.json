@@ -1,0 +1,74 @@
+[
+  {
+    "model": "guide.guide",
+    "pk": "34c40aeb-5866-4240-915d-c94526df3fbb",
+    "fields": {
+      "name": "Справочник Диагнозов Лаборатории",
+      "short_name": "Диагнозы Лабораторий",
+      "description": ""
+    }
+  },
+  {
+    "model": "guide.guide",
+    "pk": "9f21c1f7-e4aa-4b23-a77a-3b6c9a82902b",
+    "fields": {
+      "name": "Справочник Симптомов КОВИД",
+      "short_name": "Симптомы КОВИД",
+      "description": ""
+    }
+  },
+  {
+    "model": "guide.guideversion",
+    "pk": "115e9182-3958-47e6-9c47-6864152f8f0d",
+    "fields": {
+      "guide_id": "9f21c1f7-e4aa-4b23-a77a-3b6c9a82902b",
+      "title": "1.0",
+      "date_created": "2021-09-19"
+    }
+  },
+  {
+    "model": "guide.guideversion",
+    "pk": "18dfb9f3-9374-44c3-8345-13a8f6da5206",
+    "fields": {
+      "guide_id": "34c40aeb-5866-4240-915d-c94526df3fbb",
+      "title": "1.0",
+      "date_created": "2021-09-18"
+    }
+  },
+  {
+    "model": "guide.guideversion",
+    "pk": "fc0d6d70-27e2-4b84-9074-ceb2904cbed7",
+    "fields": {
+      "guide_id": "34c40aeb-5866-4240-915d-c94526df3fbb",
+      "title": "1.1",
+      "date_created": "2021-09-19"
+    }
+  },
+  {
+    "model": "guide.guideversion",
+    "pk": "fdb32d7b-b51b-4834-bb74-1e0f678ed8e2",
+    "fields": {
+      "guide_id": "34c40aeb-5866-4240-915d-c94526df3fbb",
+      "title": "0.9",
+      "date_created": "2021-08-11"
+    }
+  },
+  {
+    "model": "guide.guideitem",
+    "pk": "489e3db2-e491-4486-883b-16eb917bf031",
+    "fields": {
+      "parent_id": "fc0d6d70-27e2-4b84-9074-ceb2904cbed7",
+      "code_item": "SAS",
+      "value_item": "Тошноты"
+    }
+  },
+  {
+    "model": "guide.guideitem",
+    "pk": "4ff1b5c3-bca8-4768-910f-54560eff4c14",
+    "fields": {
+      "parent_id": "fc0d6d70-27e2-4b84-9074-ceb2904cbed7",
+      "code_item": "FFF",
+      "value_item": "Темп"
+    }
+  }
+]
