@@ -1,26 +1,56 @@
+from django import forms
 from django.contrib import admin
+from django.core.exceptions import ValidationError
+from django.forms import BaseInlineFormSet
 from django.urls import reverse
 from django.utils.html import format_html
 
 from .models import Guide, GuideItem, GuideVersion
 
 
+class GuideVersionFormSet(BaseInlineFormSet):
+    def clean(self):
+        for form in self.forms:
+            if not form.is_valid():
+                return
+            # Делаю проверку кол-ва добавленных форм
+            if len(self.forms) > 1:
+                if form not in self.initial_forms:
+                    # Если форма не была ранее создана
+                    # Делаю проверку версии, ести ли уже такая версия в справочнике
+                    if form.cleaned_data and not form.cleaned_data.get('DELETE'):
+                        title = form.cleaned_data.get('title')
+                        if title:
+                            if GuideVersion.objects.filter(title=title, guide_id=self.instance).exists():
+                                raise ValidationError(f'Справочник с версией {title} ужу существет')
+
+                else:
+                    # Если форма была ранее создана
+                    # Делаю проверку версии, ести ли уже такая версия в справочнике
+                    if form.cleaned_data and not form.cleaned_data.get('DELETE'):
+                        title = form.cleaned_data.get('title')
+                        if title:
+                            if title != form.initial.get('title'):
+                                if GuideVersion.objects.filter(title=title, guide_id=self.instance).exists():
+                                    raise ValidationError(f'Справочник с версией {title} ужу существет')
+
+
 class GuideVersionTabularInline(admin.TabularInline):
     model = GuideVersion
     fields = ['title', 'date_created', 'add_button']
     readonly_fields = ('add_button',)
+    formset = GuideVersionFormSet
     extra = 0
 
+    @admin.display(description='Добавить элемент')
     def add_button(self, obj):
         return format_html(
-            '<a class="button" href="{}">Добавить</a>',
-            reverse('admin:guide_guideversion_change', args=[obj.pk])
+            '<a class="button" href="{}">Добавить</a><p class="help">{}</p>',
+            reverse('admin:guide_guideversion_change', args=[obj.pk]),
+            ('Можно только после сохранения формы',)
         )
 
-    def get_formset(self, request, obj=None, **kwargs):
-        labels = {'add_button': 'Добавить элементы'}
-        kwargs.update({'labels': labels})
-        return super().get_formset(request, obj, **kwargs)
+
 
 
 @admin.register(Guide)
