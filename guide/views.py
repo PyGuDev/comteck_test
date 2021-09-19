@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.db.models import Value
 from rest_framework.generics import ListAPIView
 from .serializers import ListGuideSerializer
 from .models import Guide
@@ -18,7 +19,9 @@ class ListGuideAPIView(ListAPIView):
         date = self.request.query_params.get('date')
         if date:
             try:
-                queryset = queryset.filter(guide_version__date_created__gte=date)
+                queryset = queryset.annotate(
+                    filter_date=Value(date)).filter(
+                    guide_version__date_created__gte=date).distinct('name')
             except ValidationError:
                 pass
         return queryset
