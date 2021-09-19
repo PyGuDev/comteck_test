@@ -30,7 +30,7 @@ class ListGuideSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Guide
-        fields = ['id', 'name', 'short_name', 'versions']
+        fields = ['id', 'name', 'short_name', 'description', 'versions']
 
 
 class ListGuideItemSerializer(serializers.ModelSerializer):
