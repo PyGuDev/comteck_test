@@ -47,7 +47,7 @@ class ListGuideItemAPIView(ListAPIView):
         return queryset
 
 
-class ListGuideItemSelectedVersion(ListGuideItemAPIView):
+class ListGuideItemSelectedVersionAPIView(ListGuideItemAPIView):
     """
     Получение списка элементов выбранной версии
 
