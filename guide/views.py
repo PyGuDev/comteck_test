@@ -1,7 +1,11 @@
 from django.core.exceptions import ValidationError
-from django.db.models import Value
+from django.db.models import Value, QuerySet
 from django.http import Http404
+from rest_framework import status
 from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+
+from .exceptions import BadRequestError
 from .serializers import ListGuideSerializer, ListGuideItemSerializer
 from .models import Guide, GuideItem, GuideVersion
 
@@ -36,15 +40,37 @@ class ListGuideItemAPIView(ListAPIView):
     """
     serializer_class = ListGuideItemSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[GuideItem]:
         pk = self.kwargs.get('guide_pk')
         try:
+            # Получаем актуальную версию заданного справочника
             guide = Guide.objects.get_current_version(pk)
         except Guide.DoesNotExist:
             raise Http404
 
         queryset = GuideItem.objects.filter(parent_id=guide)
         return queryset
+
+    def put(self, request, **kwargs):
+        return self._validate_items(request)
+
+    def _validate_items(self, request):
+        """Проверкак входящих данных списка словарей элементов справочника"""
+        data = request.data
+        serializer = self.serializer_class(data=data, many=True)
+        serializer.is_valid(raise_exception=True)
+
+        self._validate(serializer.data)
+        return Response(status=status.HTTP_200_OK)
+
+    def _validate(self, list_data: dict):
+        """Проверяем наличие элементов в базе данных"""
+        queryset = self.get_queryset()
+        for item in list_data:
+            try:
+                queryset.get(**item)
+            except GuideItem.DoesNotExist:
+                raise BadRequestError(message=f'Items code {item.get("code_item")} invalid', code='invalid')
 
 
 class ListGuideItemSelectedVersionAPIView(ListGuideItemAPIView):
