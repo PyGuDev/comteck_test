@@ -1,8 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db.models import Value
+from django.http import Http404
 from rest_framework.generics import ListAPIView
-from .serializers import ListGuideSerializer
-from .models import Guide
+from .serializers import ListGuideSerializer, ListGuideItemSerializer
+from .models import Guide, GuideItem
 
 
 class ListGuideAPIView(ListAPIView):
@@ -19,10 +20,23 @@ class ListGuideAPIView(ListAPIView):
         date = self.request.query_params.get('date')
         if date:
             try:
-                # Сделал филтр актуальных на указанную дату
-                queryset = queryset.annotate(
-                    filter_date=Value(date)).filter(
-                    guide_version__date_created__gte=date).distinct('name')
+                # Сделал фильтр актуальных на указанную дату
+                queryset = Guide.objects.filter_date(date).annotate(
+                    filter_date=Value(date))
             except ValidationError:
                 pass
+        return queryset
+
+
+class ListGuideItemAPIView(ListAPIView):
+    """Получение элементов спраочника актаульной версии"""
+    serializer_class = ListGuideItemSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        try:
+            guide = Guide.objects.get_current_version(pk)
+        except Guide.DoesNotExist:
+            raise Http404
+        queryset = GuideItem.objects.filter(parent_id=guide)
         return queryset
