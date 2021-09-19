@@ -3,7 +3,7 @@ from django.db.models import Value
 from django.http import Http404
 from rest_framework.generics import ListAPIView
 from .serializers import ListGuideSerializer, ListGuideItemSerializer
-from .models import Guide, GuideItem
+from .models import Guide, GuideItem, GuideVersion
 
 
 class ListGuideAPIView(ListAPIView):
@@ -30,17 +30,35 @@ class ListGuideAPIView(ListAPIView):
 
 class ListGuideItemAPIView(ListAPIView):
     """
-    Получение элементов спраочника
+    Получение списка элементов спраочника
 
-    Получаение элементы актуальной версии (последней)
+    Получаение списка элементов актуальной версии (последней)
     """
     serializer_class = ListGuideItemSerializer
 
     def get_queryset(self):
-        pk = self.kwargs.get('pk')
+        pk = self.kwargs.get('guide_pk')
         try:
             guide = Guide.objects.get_current_version(pk)
         except Guide.DoesNotExist:
             raise Http404
+
         queryset = GuideItem.objects.filter(parent_id=guide)
         return queryset
+
+
+class ListGuideItemSelectedVersion(ListGuideItemAPIView):
+    """
+    Получение списка элементов выбранной версии
+
+    Указываектся version_pk
+    """
+
+    def get_queryset(self):
+        pk = self.kwargs.get('version_pk')
+        try:
+            guide_version = GuideVersion.objects.get(id=pk)
+        except GuideVersion.DoesNotExist:
+            raise Http404
+
+        return guide_version.guide_item.all()
