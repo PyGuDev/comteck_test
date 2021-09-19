@@ -19,6 +19,7 @@ class ListGuideAPIView(ListAPIView):
         date = self.request.query_params.get('date')
         if date:
             try:
+                # Сделал филтр актуальных на указанную дату
                 queryset = queryset.annotate(
                     filter_date=Value(date)).filter(
                     guide_version__date_created__gte=date).distinct('name')
