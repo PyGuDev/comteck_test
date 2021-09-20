@@ -15,8 +15,8 @@ class GuideTestCase(TestCase):
         response = self.client.get(list_guide_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(list(response.data[0].keys()), ['id', 'name', 'short_name', 'description', 'versions'])
-        self.assertEqual(list(response.data[0].get('versions')[0].keys()), ['id', 'title', 'date_created'])
+        self.assertEqual(list(response.data['results'][0].keys()), ['id', 'name', 'short_name', 'description', 'versions'])
+        self.assertEqual(list(response.data['results'][0].get('versions')[0].keys()), ['id', 'title', 'date_created'])
 
     def test_get_list_guide_selected_date(self):
         list_guide_url = reverse('list_guide')
@@ -24,7 +24,7 @@ class GuideTestCase(TestCase):
 
         response = self.client.get(list_guide_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data[0].get('versions')), 2)
+        self.assertEqual(len(response.data['results'][0].get('versions')), 2)
 
     def test_get_list_guide_selected_invalid_date(self):
         list_guide_url = reverse('list_guide')
@@ -32,7 +32,7 @@ class GuideTestCase(TestCase):
 
         response = self.client.get(list_guide_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertNotEqual(len(response.data[0].get('versions')), 2)
+        self.assertNotEqual(len(response.data['results'][0].get('versions')), 2)
 
     def test_get_list_item_version_current(self):
         list_guide_item_url = reverse('list_guide_item_current',
@@ -40,8 +40,8 @@ class GuideTestCase(TestCase):
         response = self.client.get(list_guide_item_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(list(response.data[0].keys()), ['code_item', 'value_item'])
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(list(response.data['results'][0].keys()), ['code_item', 'value_item'])
+        self.assertEqual(len(response.data['results']), 2)
 
     def test_get_list_item_version_current_404(self):
         list_guide_item_url = reverse('list_guide_item_current',
@@ -90,8 +90,8 @@ class GuideTestCase(TestCase):
         response = self.client.get(list_guide_item_url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(list(response.data[0].keys()), ['code_item', 'value_item'])
+        self.assertEqual(len(response.data['results']), 2)
+        self.assertEqual(list(response.data['results'][0].keys()), ['code_item', 'value_item'])
 
     def test_get_list_item_selected_version_404(self):
         list_guide_item_url = reverse('list_guide_item_selected_version',
