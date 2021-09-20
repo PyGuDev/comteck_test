@@ -5,6 +5,7 @@ from django.db.models import Value, QuerySet
 from django.http import Http404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
@@ -15,6 +16,10 @@ from .serializers import ListGuideSerializer, ListGuideItemSerializer
 from .models import Guide, GuideItem, GuideVersion
 
 
+class Pagination(PageNumberPagination):
+    page_size = 10
+
+
 class ListGuideAPIView(ListAPIView):
     """
     Вывод списка справочников
@@ -23,6 +28,7 @@ class ListGuideAPIView(ListAPIView):
     ?date=2021-10-10 в таком формате
     """
     serializer_class = ListGuideSerializer
+    pagination_class = Pagination
 
     def get_queryset(self):
         queryset = Guide.objects.all()
@@ -44,6 +50,7 @@ class ListGuideItemAPIView(ListAPIView):
     Получаение списка элементов актуальной версии (последней)
     """
     serializer_class = ListGuideItemSerializer
+    pagination_class = Pagination
 
     def get_queryset(self) -> QuerySet[GuideItem]:
         pk = self.kwargs.get('guide_pk')
